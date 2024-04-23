@@ -1,9 +1,9 @@
 <template>
   <div>
     <nav>
-      <ul>
-        <li><a href="#" @click="createNewBoard">Añadir una lista</a></li>
-      </ul>
+      
+          <a href="#" @click="createNewBoard">Añadir una lista</a>
+       
       <h3>instrucciones:</h3>
       <h4>Si desea modificar el nombre de una tarea o de la lista de quehaceres, haga clic en ella. Seguido de esto
         aparecerá un evento "Dom" para modificar el texto seleccionado.</h4>
@@ -18,7 +18,7 @@
             <span @click="renameBoard(board)">{{ board.name }}</span>
           </div>
           <div class="input">
-            <input v-model="text" @keydown.enter="handleNewItem(text, board)" />
+            <input v-model="board.newItemText" @keydown.enter="handleNewItem(board)" />
           </div>
           <div class="item drag-el" v-for="item in board.items" :key="item.id">
             <div class="task-header">
@@ -35,25 +35,36 @@
 <script setup>
 import { ref, reactive } from "vue";
 
-const text = ref("");
 const boards = reactive([
   {
     id: "1",
-    name: "board-1",
-    items: [{ id: "1", title: "Hola a todos" }],
+    name: "tablero 1",
+    newItemText: "",
+    items: [{ id: "1", title: "primera tarea" }],
   },
+  {
+    id: "2",
+    name: "tablero 2",
+    newItemText: "",
+    items: [{ id: "1", title: "primera tarea" }],
+  }
 ]);
 
-function handleNewItem(text, board) {
-  board.items.push({ id: Math.random().toString(36).substr(2, 9), title: text });
+function handleNewItem(board) {
+  const text = board.newItemText.trim();
+  if (text !== "") {
+    board.items.push({ id: Math.random().toString(36).substr(2, 9), title: text });
+    board.newItemText = "";
+  }
 }
 
 function createNewBoard() {
-  const name = prompt("Name of board");
+  const name = prompt("nombre del tablero");
   if (name) {
     const board = {
       id: Math.random().toString(36).substr(2, 9),
       name: name,
+      newItemText: "",
       items: [],
     };
     boards.push(board);
@@ -61,14 +72,14 @@ function createNewBoard() {
 }
 
 function renameBoard(board) {
-  const newName = prompt("Enter new name for the board", board.name);
+  const newName = prompt("Escriba el nuevo nombre del tablero", board.name);
   if (newName && newName !== board.name) {
     board.name = newName;
   }
 }
 
 function renameTask(task) {
-  const newName = prompt("Enter new name for the task", task.title);
+  const newName = prompt("Escriba el nuevo nombre de la tarea", task.title);
   if (newName && newName !== task.title) {
     task.title = newName;
   }
